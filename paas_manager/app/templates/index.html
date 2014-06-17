@@ -1,0 +1,43 @@
+<html>
+<head>
+    <link rel='stylesheet' href='/static/style.css' />
+</head>
+<body>
+
+    <h1>Hadoooooooop!</h1>
+    
+    
+    <form method="post" enctype="multipart/form-data" action="/hadoooop">
+    
+        <h2>Your Name</h3>
+        <input type="text" name="yourname">
+
+        <h2>E-MAIL Address</h3>
+        <input type="text" name="email" placeholder="Email"/>
+		
+        <h2>jar File</h2>        
+        <input type="file" name="jarfile">
+        <input type="submit">
+    </form>
+
+
+
+		<table>
+			<tbody>
+				<tr>
+					<th>name</th>
+					<th>filename</th>
+					<th>status</th>
+				</tr>
+    {% for item in items %}
+				<tr>
+					<td>{{ item.name }}</td>
+					<td>{{ item.filename }}</td>
+					<td>{{ item.status }}</td>
+				</tr>
+    {% endfor %}
+			</tbody>
+		</table>
+		<br>
+</body>
+</html>
