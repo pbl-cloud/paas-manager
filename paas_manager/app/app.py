@@ -1,4 +1,5 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
+from werkzeug import secure_filename
  
 app = Flask(__name__)
  
@@ -8,16 +9,20 @@ class Item:
 	    item.filename = filename
 	    item.status = status
  
+
+items = []
+
 @app.route("/")
-def list():
-    items = [Item( 'honda', 'aiueo.jar', 'waiting'), Item( 'kagawa', 'kakikukeko.jar', 'finished') ]
+def view_index():
     return render_template("index.html", items=items)
 	
-@app.route("/hadoooop", methods=['GET', 'POST'])
-def lista():
-    items = [Item( 'honda', 'aiueo.jar', 'waiting'), Item( 'kagawa', 'kakikukeko.jar', 'finished') ]
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        f = request.files['jarfile']
+        f.save('/tmp/uploads/' + secure_filename(f.filename))
+        items.append( Item(request.form['username'], f.filename, 'uploaded') )
     return render_template("index.html", items=items)
-	
-	
- 
-app.run()
+    
+if __name__ == '__main__':
+    app.run(debug=True)
