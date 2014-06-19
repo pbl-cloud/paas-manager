@@ -35,11 +35,13 @@ class Test_HadoopModules(unittest.TestCase):
             self.assertEqual(err, "err\n")
         command = ["ssh", "localhost", "test/paas-manager/" + self.mock_path]
 
+        t = self.hadoopModules.start_hadoop("", [], callback, command)
         try:
-            self.hadoopModules.start_hadoop("", [], callback, command)
             self.hadoopModules.start_hadoop("", [], callback, command)
         except Exception as e:
             self.assertEqual(e.args[0], "Duplicate threads: please wait until the end of the existing thread.")
+
+        t.join()
 
 if __name__ == '__main__':
     unittest.main()
