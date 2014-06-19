@@ -13,7 +13,7 @@ class MyTestCase(unittest.TestCase):
 
     def test_exec_hadoop(self):
         command = ["dir"]
-        exec_hadoop(command, self.callback)
+        exec_hadoop(command, [],  self.callback)
 
 if __name__ == '__main__':
     unittest.main()
