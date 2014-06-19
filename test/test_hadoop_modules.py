@@ -8,8 +8,8 @@ class Test_hadoop_modules(unittest.TestCase):
         args = []
 
         def callback(out, err):
-            print(out)
-            print(err)
+            print("stdout: " + out)
+            print("stderr: " + err)
 
         t = start_hadoop(jar_path, args, callback)
 
