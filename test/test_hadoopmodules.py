@@ -42,6 +42,8 @@ class Test_HadoopModules(unittest.TestCase):
             self.assertEqual(e.args[0], "Duplicate threads: please wait until the end of the existing thread.")
 
         t.join()
+        t = self.hadoopModules.start_hadoop("", [], callback, command)
+        t.join()
 
 if __name__ == '__main__':
     unittest.main()
