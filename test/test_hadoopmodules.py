@@ -10,7 +10,7 @@ class Test_HadoopModules(unittest.TestCase):
         jar_path = "path"
         args = []
 
-        command = ["ssh", "localhost", self.mock_path]
+        command = ["ssh", "localhost", "test/paas-manager/" + self.mock_path]
 
         def callback(out, err):
             print("stdout: " + out)
