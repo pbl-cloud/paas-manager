@@ -6,7 +6,7 @@ def start_hadoop(path, args, callback):
     command = ["ssh", hostname, "hadoop", "jar", path]
     command.extend(args)
 
-    t = threading.Thread(target=exec_hadoop,args=(command, callback))
+    t = threading.Thread(target=exec_hadoop, args=(command, callback))
     t.setDaemon(True)
     t.start()
     return t
