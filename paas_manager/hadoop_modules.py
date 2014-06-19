@@ -1,12 +1,14 @@
 import threading
 import subprocess
 
+
 class Singleton(type):
     _instances = {}
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:
             cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
         return cls._instances[cls]
+
 
 class HadoopModules(metaclass=Singleton):
 
@@ -16,8 +18,9 @@ class HadoopModules(metaclass=Singleton):
     def __init__(self):
         pass
 
-    def start_hadoop(self, path, args, callback):
-        command = ["ssh", self.hostname, "hadoop", "jar", path]
+    def start_hadoop(self, path, args, callback, command=None):
+        if command is None:
+            command = ["ssh", self.hostname, "hadoop", "jar", path]
         command.extend(args)
 
         if self.t is not None and self.t.is_alive():
