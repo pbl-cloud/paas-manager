@@ -13,8 +13,8 @@ class Test_HadoopModules(unittest.TestCase):
         command = ["ssh", "localhost", "test/paas-manager/" + self.mock_path]
 
         def callback(out, err):
-            print("stdout: " + out)
-            print("stderr: " + err)
+            self.assertEqual(out, "fin\n")
+            self.assertEqual(err, "err\n")
 
         t = self.hadoopModules.start_hadoop(jar_path, args, callback, command)
 
