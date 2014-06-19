@@ -11,7 +11,9 @@ class Test_hadoop_modules(unittest.TestCase):
             print(out)
             print(err)
 
-        start_hadoop(jar_path, args, callback)
+        t = start_hadoop(jar_path, args, callback)
+
+        t.join()
 
     def test_exec_hadoop(self):
         mock_path = "test/mock_exec_hadoop.sh"
