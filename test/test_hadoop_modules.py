@@ -10,7 +10,7 @@ class MyTestCase(unittest.TestCase):
     def test_exec_hadoop(self):
         mock_path = "test/mock_exec_hadoop.sh"
 
-        def callback(self, out, err):
+        def callback(out, err):
             self.assertEqual(out, "fin\n")
             self.assertEqual(err, "err\n")
 
