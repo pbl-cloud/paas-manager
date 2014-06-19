@@ -2,10 +2,16 @@ import unittest
 from paas_manager.hadoop_modules import start_hadoop, exec_hadoop
 
 
-class MyTestCase(unittest.TestCase):
+class Test_hadoop_modules(unittest.TestCase):
     def test_start_hadoop(self):
-        start_hadoop()
-        self.assertEqual(True, False)
+        jar_path = ""
+        args = []
+
+        def callback(out, err):
+            self.assertEqual(out, "fin\n")
+            self.assertEqual(err, "err\n")
+
+        start_hadoop(jar_path, args, callback)
 
     def test_exec_hadoop(self):
         mock_path = "test/mock_exec_hadoop.sh"
