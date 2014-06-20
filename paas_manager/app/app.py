@@ -21,7 +21,7 @@ def upload_file():
     if request.method == 'POST':
         f = request.files['jarfile']
         f.save('/tmp/uploads/' + secure_filename(f.filename))
-        items.append( Item(request.form['username'], f.filename, 'uploaded') )
+        items.append( Item(request.form['username'], f.filename, 'waiting') )
     return render_template("index.html", items=items)
     
 if __name__ == '__main__':
