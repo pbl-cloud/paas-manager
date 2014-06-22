@@ -21,18 +21,20 @@ def mysql_execute(query):
 
 
 def hash_password(email, password):
-    if is_registered(email):
-        return
-    salt = hashlib.sha1(email)
-    hashed_password = hashlib.sha1(password + salt)
+    email = email.encode()
+    password = password.encode()
+    salt = hashlib.sha1(email).hexdigest().encode()
+    hashed_password = hashlib.sha1(password + salt).hexdigest().encode()
     for i in range(100):
-        hashed_password = hashlib.sha1(hashed_password)
-    return hashed_password
+        hashed_password = hashlib.sha1(hashed_password).hexdigest().encode()
+    return hashed_password.decode()
 
 
 def register_user(email, password):
+    if is_registered(email):
+        return
     hashed_password = hash_password(email, password)
-    mysql_execute('insert into users (email, hashed_password) values (' + email + ', ' + hashed_password)
+    mysql_execute('insert into users (email, hashed_password) values (\'' + email + '\', \'' + hashed_password + '\')')
 
 
 def is_registered(email):
@@ -41,10 +43,14 @@ def is_registered(email):
 
 
 def login_user(email, password):
-    if is_registered(email):
+    if not is_registered(email):
         raise Exception('User not found')
     hashed_password = hash_password(email, password)
     rows = mysql_execute('select hashed_password from users where email = \'' + email + '\'')
-    return rows[0] == hashed_password
+    return rows[0][0] == hashed_password
 
 
+def delete_user(email):
+    if not is_registered(email):
+        raise Exception('User not found')
+    mysql_execute('delete from users where email = \'' + email + '\'')
