@@ -1,5 +1,5 @@
 import unittest
-from paas_manager.hadoop_modules import HadoopModules
+from paas_manager.app.hadoop_modules import HadoopModules
 
 
 class Test_HadoopModules(unittest.TestCase):
