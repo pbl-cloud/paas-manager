@@ -13,7 +13,7 @@ class Singleton(type):
 
 class HadoopModules(metaclass=Singleton):
     t = None
-    hostname = "star@192.168.122.10"
+    hostname = "star@192.168.122.8"
 
     def __init__(self):
         pass
