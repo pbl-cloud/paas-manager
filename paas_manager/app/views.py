@@ -3,11 +3,12 @@ from flask import render_template, request, redirect, url_for
 from werkzeug import secure_filename
 import os
 
-from .models import Jobs
+from .models import Jobs, Users
 
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'jar'])
 
 jobs = Jobs()
+users = Users()
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
@@ -31,19 +32,22 @@ def upload():
 
     return redirect(url_for('index'))
 
+@app.route('/sign_up')
+def signup():
+    return render_template('sign_up.html')
+
+@app.route('/register')
+def register():
+    pass
+
+
 @app.route('/login', methods=['POST'])
 def login():
-    if _is_account_valid():
-            # セッションにユーザ名を保存してからインデックスページにリダイレクトする
-            session['username'] = request.form['username']
+    id = users.authorize(request.form['email'], request.form['password'])
+    if id:
+            session['user_id'] = id
             return redirect(url_for('index'))
     return render_template('login.html')
-
-
-def _is_account_valid():
-    if request.form.get('username') is None:
-        return False
-    return True
 
 
 @app.route('/logout', methods=['GET'])
