@@ -1,6 +1,5 @@
 from .database_connector import DatabaseConnector
 
-
 class Jobs(DatabaseConnector):
     table = 'jobs'
     WAITING = 0

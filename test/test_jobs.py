@@ -1,8 +1,8 @@
 import unittest
+import os
 
-# FIXME: use proper environment setup
-from paas_manager import config
-config['mysql']['database'] += '_test'
+os.environ['PAAS_MANAGER_ENV'] = 'test'
+
 from paas_manager.app.models.jobs import Jobs
 from paas_manager.app.models.users import Users
 
@@ -14,13 +14,17 @@ class TestJobs(unittest.TestCase):
 
     def setUp(self):
         self.users.register_user('test@test', 'test')
-        id = self.users.user_id('test@test')
-        self.jobid = self.jobs.insert_job(id, 'test.jar')
+        self.id = self.users.user_id('test@test')
+        self.jobid = self.jobs.insert_job(self.id, 'test.jar')
 
     def tearDown(self):
-        self.jobs.cursor.execute('truncate ' + self.jobs.table)
-        self.jobs.connect.commit()
-        self.users.delete_user('test@test')
+        Jobs.remove_all()
+        Users.remove_all()
+
+    def test_user_jobs(self):
+        jobs = Jobs.find({'user_id': self.id})
+        self.assertEqual(1, len(jobs))
+        self.assertEqual('test.jar', jobs[0].filename)
 
     def test_update_output(self):
         self.jobs.update_output(self.jobid, 'stdout', 'stderr')
