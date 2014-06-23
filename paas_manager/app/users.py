@@ -42,7 +42,7 @@ def is_registered(email):
     return len(rows) > 0
 
 
-def login_user(email, password):
+def verify_password(email, password):
     if not is_registered(email):
         raise Exception('User not found')
     hashed_password = hash_password(email, password)
