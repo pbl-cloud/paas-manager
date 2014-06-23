@@ -1,12 +1,9 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 import os
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug import secure_filename
 from gmail import *
 from hadoop_modules import HadoopModules
- 
+
 app = Flask(__name__)
 
 UPLOAD_FOLDER = '/home/ubuntu/jar'
@@ -40,14 +37,14 @@ class QueueManager:
 
 
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS 
+    return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 items = []
 
 @app.route("/")
 def index():
     return render_template("index.html", items=items)
-	
+
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
 
@@ -61,7 +58,7 @@ def upload():
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             items.append( Item(request.form['username'], file.filename, 'waiting') )
             #gmail(file.filename, email)
-	
+
     return redirect(url_for('index'))
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -89,6 +86,6 @@ def logout():
     session.pop('username', None)
     # ログインページにリダイレクトする
     return redirect(url_for('index'))
-    
+
 if __name__ == '__main__':
     app.run(debug=True)
