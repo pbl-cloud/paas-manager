@@ -11,7 +11,8 @@ class TestJobs(unittest.TestCase):
         self.jobid = self.jobs.insert_job(1, 'test.jar')
 
     def tearDown(self):
-        self.jobs.delete_job(self.jobid)
+        self.jobs.cursor.execute('truncate ' + self.jobs.table)
+        self.jobs.connect.commit()
 
     def test_update_output(self):
         self.jobs.update_output(self.jobid, 'stdout', 'stderr')
