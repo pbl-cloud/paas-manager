@@ -1,6 +1,8 @@
 import threading
 import subprocess
 
+from .. import config
+
 
 class Singleton(type):
     _instances = {}
@@ -13,7 +15,7 @@ class Singleton(type):
 
 class HadoopModules(metaclass=Singleton):
     t = None
-    hostname = "star@192.168.122.8"
+    hostname = "{user}@{host}".format(**config['hadoop'])
 
     def __init__(self):
         pass

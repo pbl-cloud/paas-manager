@@ -1,10 +1,12 @@
 import unittest
-from paas_manager.app.users import Users
 
+# FIXME: use proper environment setup
+from paas_manager import config
+config['mysql']['database'] += '_test'
+from paas_manager.app.models.users import Users
 
 class TestUsers(unittest.TestCase):
     users = Users()
-    users.table = 'test_users'
 
     def setUp(self):
         self.users.register_user('test@test', 'test')

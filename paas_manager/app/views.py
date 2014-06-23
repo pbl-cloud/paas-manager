@@ -3,7 +3,11 @@ from flask import render_template, request, redirect, url_for
 from werkzeug import secure_filename
 import os
 
+from .models import Jobs
+
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'jar'])
+
+jobs = Jobs()
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS

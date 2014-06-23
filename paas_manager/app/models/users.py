@@ -31,7 +31,7 @@ class Users(DatabaseConnector):
 
     def verify_password(self, email, password):
         hashed_password = _hash_password(email, password)
-        self.cursor.execute('select userid, hashed_password from ' + self.table + ' where email = %s', (email,))
+        self.cursor.execute('select id, hashed_password from ' + self.table + ' where email = %s', (email,))
         rows = self.cursor.fetchall()
         if len(rows) == 0:
             raise Exception('User not found')
@@ -47,7 +47,7 @@ class Users(DatabaseConnector):
         self.connect.commit()
 
     def user_id(self, email):
-        self.cursor.execute('select userid from ' + self.table + ' where email = %s', (email,))
+        self.cursor.execute('select id from ' + self.table + ' where email = %s', (email,))
         rows = self.cursor.fetchall()
         if len(rows) == 0:
             raise Exception('User not found')

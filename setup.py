@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='paas-manager',
@@ -10,10 +10,10 @@ setup(
     url='https://github.com/pbl-cloud/paas-manager',
     download_url='https://github.com/pbl-cloud/paas-manager/archive/master.zip',
     license='MIT',
-    packages=['paas_manager'],
+    packages=find_packages(),
     include_package_data=True,
     zip_safe=True,
-    test_suite='',
+    test_suite='test',
     install_requires = ["kazoo"],
     classifiers=[
         'Development Status :: 1 - Planning'
