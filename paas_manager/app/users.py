@@ -29,11 +29,14 @@ class Users(DatabaseConnector):
 
     def verify_password(self, email, password):
         hashed_password = _hash_password(email, password)
-        self.cursor.execute('select hashed_password from users where email = %s', (email,))
+        self.cursor.execute('select userid, hashed_password from users where email = %s', (email,))
         rows = self.cursor.fetchall()
         if len(rows) == 0:
             raise Exception('User not found')
-        return rows[0][0] == hashed_password
+        if rows[0][1] == hashed_password:
+            return rows[0][0]
+        else:
+            return None
 
     def delete_user(self, email):
         if not self.is_registered(email):

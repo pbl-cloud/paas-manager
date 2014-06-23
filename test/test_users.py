@@ -15,10 +15,10 @@ class TestUsers(unittest.TestCase):
         self.assertTrue((self.users.is_registered('test@test')))
 
     def test_verify_success(self):
-        self.assertTrue(self.users.verify_password('test@test', 'test'))
+        self.assertEqual(self.users.verify_password('test@test', 'test'), self.users.user_id('test@test'))
 
     def test_verify_failed(self):
-        self.assertFalse(self.users.verify_password('test@test', 'pass'))
+        self.assertEqual(self.users.verify_password('test@test', 'pass'), None)
 
     def test_user_id(self):
         id = self.users.user_id('test@test')
