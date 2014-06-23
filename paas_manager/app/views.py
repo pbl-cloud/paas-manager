@@ -1,9 +1,10 @@
 from . import app
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, session
 from werkzeug import secure_filename
 import os
 
 from .models import Jobs, Users
+from .forms import RegistrationForm
 
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'jar'])
 
@@ -36,9 +37,13 @@ def upload():
 def signup():
     return render_template('sign_up.html')
 
-@app.route('/register')
+@app.route('/register', methods=['POST'])
 def register():
-    pass
+    form = RegistrationForm(request.form)
+    if request.method == 'POST' and form.validate():
+        user = Users.create(form.data)
+        session['user_id'] = user.id
+    return redirect(url_for('index'))
 
 
 @app.route('/login', methods=['POST'])

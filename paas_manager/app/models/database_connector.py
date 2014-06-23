@@ -83,14 +83,19 @@ class DatabaseConnector():
     def is_new(self):
         return self.id is None
 
+    def before_save(self):
+        pass
+
     def save(self):
+        self.before_save()
         query_template = "insert into {table} ({fields}) values ({values})"
-        fields = ' '.join([str(key) for key in self._args.keys()])
-        values = ' '.join(['%s' for _ in self._args.values()])
+        fields = ', '.join([str(key) for key in self._args.keys()])
+        values = ', '.join(['%s' for _ in self._args.values()])
         query = query_template.format(table=self.table, fields=fields, values=values)
         self.cursor.execute(query, tuple(self._args.values()))
         if self.is_new():
             self.id = self.cursor.lastrowid
+        self.connect.commit()
         return self
 
     def remove(cls):
@@ -98,3 +103,13 @@ class DatabaseConnector():
         query = query_template.format(table=self.table)
         cls.cursor.execute(query, (self.id,))
 
+
+    def _add_attr(self, key, value):
+        setattr(self, key, value)
+        self._args[key] = value
+
+    def _del_attr(self, key):
+        if hasattr(self, key):
+            delattr(self, key)
+        if key in self._args:
+            del self._args[key]

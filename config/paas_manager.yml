@@ -11,3 +11,6 @@ mysql:
 hadoop:
   user: star
   host: 192.168.122.8
+
+security:
+  secret: "I'M NOT VERY SECRET. OVERRIDE ME"

@@ -55,6 +55,12 @@ class Users(DatabaseConnector):
         self.cursor.execute('delete from ' + self.table + ' where email = %s', (email,))
         self.connect.commit()
 
+
+    def before_save(self):
+        if hasattr(self, 'password'):
+            self._add_attr('hashed_password', _hash_password(self.email, self.password))
+            self._del_attr('password')
+
     @classmethod
     def user_id(cls, email):
         cls.cursor.execute('select id from ' + cls.table + ' where email = %s', (email,))
