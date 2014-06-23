@@ -1,0 +1,13 @@
+zookeeper:
+  hosts: '127.0.0.1:2181'
+
+mysql:
+  host: localhost
+  user: OVERRIDE_ME_IN_LOCAL_SETTINGS
+  password: OVERRIDE_ME_IN_LOCAL_SETTINGS
+  database: paas_manager
+  charset: utf8
+
+hadoop:
+  user: star
+  host: 192.168.122.8
