@@ -12,7 +12,7 @@ class Jobs(DatabaseConnector):
         self.connect.commit()
 
     def insert_job(self, userid, filename):
-        self.cursor.execute('insert into jobs (userid,filename) values (%s,%s)', (str(userid), filename))
+        self.cursor.execute('insert into jobs (userid,filename,status) values (%s,%s,0)', (str(userid), filename))
         self.connect.commit()
         return self.cursor.lastrowid
 
@@ -26,9 +26,9 @@ class Jobs(DatabaseConnector):
         self.connect.commit()
 
     def status_of(self, jobid):
-        self.cursor.execute('select status from jobs where jobid=%s', (str(jobid),))
-        rows = self.cursor.fetchall()
-        return rows[0][0]
+        self.cursor.execute('select status from jobs where jobid=%s limit 1', (str(jobid),))
+        rows = self.cursor.fetchone()
+        return rows[0]
 
     def fetch_job(self, jobid):
         self.cursor.execute('select * from jobs where jobid=%s limit 1', (str(jobid),))
