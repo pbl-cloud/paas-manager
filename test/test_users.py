@@ -18,6 +18,8 @@ class TestUsers(unittest.TestCase):
     def test_verify_failed(self):
         self.assertFalse(users.verify_password('test@test', 'pass'))
 
+    def test_user_id(self):
+        id = users.user_id('test@test')
 
 if __name__ == '__main__':
     unittest.main()
