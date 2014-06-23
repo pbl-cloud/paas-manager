@@ -1,20 +1,20 @@
-# -*- coding: utf-8 -*-
 import sys
 import smtplib
-from email.MIMEText import MIMEText
-from email.Header import Header
-from email.Utils import formatdate
+from email.mime.text import MIMEText
+from email.utils import formatdate
 
 argvs = sys.argv
 argc = len(argvs)
 
+
 def create_message(from_addr, to_addr, subject, message, encoding):
     body = MIMEText(message, 'plain', encoding)
-    body['Subject'] = Header(subject, encoding)
+    body['Subject'] = subject
     body['From'] = from_addr
     body['To'] = to_addr
     body['Date'] = formatdate()
     return body
+
 
 def send_via_gmail(from_addr, to_addr, body):
     s = smtplib.SMTP('smtp.gmail.com', 587)
@@ -25,8 +25,9 @@ def send_via_gmail(from_addr, to_addr, body):
     s.sendmail(from_addr, [to_addr], body.as_string())
     s.close()
 
+
 def gmail(message, to_addr):
-    body = create_message('pbl.notification@gmail.com', to_addr, u'[Notification]', message, 'ISO-2022-JP')
+    body = create_message('pbl.notification@gmail.com', to_addr, '[Notification]', message, 'ISO-2022-JP')
     send_via_gmail('pbl.notification@gmail.com', to_addr, body)
     return
 
@@ -36,10 +37,10 @@ if __name__ == '__main__':
     to_addr = ''
 
     if (argc < 2):
-    	message = u'no message.'
+        message = u'no message.'
     else:
-	message = unicode(argvs[1], 'utf-8')
- 
-    body = create_message(from_addr, to_addr, u'[Notification]', message, 'ISO-2022-JP')
+        message = argvs[1]
+
+    body = create_message(from_addr, to_addr, '[Notification]', message, 'ISO-2022-JP')
 
     send_via_gmail(from_addr, to_addr, body)
