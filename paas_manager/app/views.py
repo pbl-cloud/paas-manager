@@ -8,9 +8,6 @@ from .forms import RegistrationForm
 
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'jar'])
 
-jobs = Jobs()
-users = Users()
-
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
@@ -31,6 +28,8 @@ def user_signed_in():
 @app.route("/")
 def index():
     items = []
+    if user_signed_in():
+        items = Jobs.query({'user_id': current_user().id})
     return render_template("index.html", items=items)
 
 
@@ -43,8 +42,10 @@ def upload():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            items.append(
-                Item(request.form['username'], file.filename, 'waiting'))
+            Jobs.create({
+                'user_id': current_user().id,
+                'filename': file.filename
+            })
             #gmail(file.filename, email)
 
     return redirect(url_for('index'))
@@ -62,7 +63,7 @@ def register():
 
 @app.route('/login', methods=['POST'])
 def login():
-    user = users.authorize(request.form['email'], request.form['password'])
+    user = Users.authorize(request.form['email'], request.form['password'])
     if user:
         session['user_id'] = user.id
         return redirect(url_for('index'))
