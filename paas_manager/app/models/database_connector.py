@@ -36,7 +36,7 @@ class DatabaseConnector():
         fields = [i[0] for i in cls.cursor.description]
         obj = cls()
         for i, f in enumerate(fields):
-            setattr(obj, f, values[i])
+            obj._add_attr(f, values[i])
         return obj
 
     @classmethod
