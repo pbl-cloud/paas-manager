@@ -8,6 +8,14 @@ if os.environ.get('PAAS_MANAGER_ENV') == 'test':
     config['mysql']['database'] += '_test'
 
 
+def db_action(fn):
+    def wrapped(*args, **kwargs):
+        res = fn(*args, **kwargs)
+        DatabaseConnector.connect.commit()
+        return res
+    return wrapped
+
+
 class DatabaseConnector():
     connect = mysql.connector.connect(**config['mysql'])
     cursor = connect.cursor()
@@ -76,6 +84,7 @@ class DatabaseConnector():
         return cls._make_query(conditions, {'one': True})
 
     @classmethod
+    @db_action
     def remove_all(cls):
         query_template = "delete from {table}"
         query = query_template.format(table=cls.table)
@@ -87,6 +96,7 @@ class DatabaseConnector():
     def before_save(self):
         pass
 
+    @db_action
     def save(self):
         self.before_save()
         query_template = "insert into {table} ({fields}) values ({values})"
@@ -97,9 +107,9 @@ class DatabaseConnector():
         self.cursor.execute(query, tuple(self._args.values()))
         if self.is_new():
             self.id = self.cursor.lastrowid
-        self.connect.commit()
         return self
 
+    @db_action
     def remove(cls):
         query_template = "delete from {table} where id=%s"
         query = query_template.format(table=self.table)
