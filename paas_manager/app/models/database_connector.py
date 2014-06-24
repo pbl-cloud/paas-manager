@@ -120,6 +120,10 @@ class DatabaseConnector():
             setattr(self, k, v)
         self.save()
 
+    def update_one(self, key, value):
+        setattr(self, key, value)
+        self.save()
+
     def is_new(self):
         return self.id is None
 
@@ -137,9 +141,11 @@ class DatabaseConnector():
 
     def _update(self):
         query_template = "update {table} set {fields} where id=%s"
-        fields = ', '.join(map(self._val_to_cond, self.__dict__.items()))
+        items = self.__dict__.copy()
+        items.pop('id')
+        fields = ', '.join(map(self._val_to_cond, items.items()))
         query = query_template.format(table=self.table, fields=fields)
-        self.cursor.execute(query, tuple(self.__dict__) + (self.id,))
+        self.cursor.execute(query, tuple(items.values()) + (self.id,))
 
     @db_action
     def save(self):

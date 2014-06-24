@@ -7,8 +7,6 @@ from paas_manager.app.models.users import Users
 
 
 class TestUsers(unittest.TestCase):
-    users = Users()
-
     def setUp(self):
         self.user = Users.create({'email': 'test@test', 'password': 'test'})
 
