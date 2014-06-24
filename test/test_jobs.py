@@ -21,8 +21,12 @@ class TestJobs(unittest.TestCase):
         Jobs.remove_all()
         Users.remove_all()
 
+    def test_find(self):
+        job = Jobs.find(self.jobid)
+        self.assertEqual('test.jar', job.filename)
+
     def test_user_jobs(self):
-        jobs = Jobs.find({'user_id': self.id})
+        jobs = Jobs.query({'user_id': self.id})
         self.assertEqual(1, len(jobs))
         self.assertEqual('test.jar', jobs[0].filename)
 

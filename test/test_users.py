@@ -18,6 +18,10 @@ class TestUsers(unittest.TestCase):
     def test_is_registered(self):
         self.assertTrue((Users.is_registered('test@test')))
 
+    def test_exists(self):
+        self.assertTrue(Users.exists({'email': 'test@test'}))
+        self.assertFalse(Users.exists({'email': 'test@testbar'}))
+
     def test_verify_success(self):
         self.assertEqual(
             Users.verify_password('test@test', 'test'), self.users.user_id('test@test'))
@@ -26,10 +30,10 @@ class TestUsers(unittest.TestCase):
         self.assertEqual(Users.verify_password('test@test', 'pass'), None)
 
     def test_create(self):
-        self.assertEqual(1, len(Users.find()))
+        self.assertEqual(1, len(Users.query()))
         user = Users.create({'email': 'foobar@bar.baz'})
         self.assertIsNotNone(user.id)
-        self.assertEqual(2, len(Users.find()))
+        self.assertEqual(2, len(Users.query()))
 
     def test_user_id(self):
         id = Users.user_id('test@test')
