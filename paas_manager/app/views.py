@@ -50,18 +50,14 @@ def upload():
     return redirect(url_for('index'))
 
 
-@app.route('/sign_up')
-def signup():
-    return render_template('sign_up.html')
-
-
-@app.route('/register', methods=['POST'])
+@app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm(request.form)
     if request.method == 'POST' and form.validate():
         user = Users.create(form.data)
         session['user_id'] = user.id
-    return redirect(url_for('index'))
+        return redirect(url_for('index'))
+    return render_template('register.html', form=form)
 
 
 @app.route('/login', methods=['POST'])
@@ -75,7 +71,6 @@ def login():
 
 @app.route('/logout', methods=['POST'])
 def logout():
-    #セッションからユーザ名を取り除く (ログアウトの状態にする)
     session.pop('user_id', None)
     return redirect(url_for('index'))
 

@@ -15,7 +15,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Hadooooooop!</a>
+          <a class="navbar-brand" href="/">Hadooooooop!</a>
         </div>
         <div class="navbar-collapse collapse">
           {%- if not user_signed_in() %}
@@ -27,7 +27,7 @@
                 <input type="password" name="password" placeholder="Password" class="form-control">
               </div>
               <button type="submit" class="btn btn-success">Sign in</button>
-              <a href="/sign_up" class="btn btn-primary">登録</a>
+              <a href="/register" class="btn btn-primary">登録</a>
             </form>
           {%- else %}
             <form class="navbar-form navbar-right" role="form" method="POST" action="/logout">
