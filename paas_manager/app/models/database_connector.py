@@ -122,7 +122,7 @@ class DatabaseConnector():
         return self
 
     @db_action
-    def remove(cls):
+    def remove(self):
         query_template = "delete from {table} where id=%s"
         query = query_template.format(table=self.table)
-        cls.cursor.execute(query, (self.id,))
+        self.cursor.execute(query, (self.id,))
