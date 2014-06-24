@@ -3,9 +3,6 @@ import smtplib
 from email.mime.text import MIMEText
 from email.utils import formatdate
 
-argvs = sys.argv
-argc = len(argvs)
-
 
 def create_message(from_addr, to_addr, subject, message, encoding):
     body = MIMEText(message, 'plain', encoding)
@@ -28,21 +25,20 @@ def send_via_gmail(from_addr, to_addr, body):
 
 def gmail(message, to_addr):
     body = create_message(
-        'pbl.notification@gmail.com', to_addr, '[Notification]', message, 'ISO-2022-JP')
+        'pbl.notification@gmail.com', to_addr, '[Notification]', message, 'utf8')
     send_via_gmail('pbl.notification@gmail.com', to_addr, body)
     return
 
 
 if __name__ == '__main__':
-    from_addr = 'pbl.notification@gmail.com'
-    to_addr = ''
+    argvs = sys.argv
+    argc = len(argvs)
 
-    if (argc < 2):
-        message = u'no message.'
+    if (argc < 3):
+        print('USAGE: python gmail.py address message')
+        raise SystemExit(0)
     else:
-        message = argvs[1]
+        to_addr = argvs[1]
+        message = argvs[2]
 
-    body = create_message(
-        from_addr, to_addr, '[Notification]', message, 'ISO-2022-JP')
-
-    send_via_gmail(from_addr, to_addr, body)
+    gmail(message, to_addr)
