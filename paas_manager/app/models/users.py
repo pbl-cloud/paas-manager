@@ -23,6 +23,5 @@ class Users(DatabaseConnector):
 
     def before_save(self):
         if hasattr(self, 'password'):
-            self._add_attr(
-                'hashed_password', _hash_password(self.email, self.password))
-            self._del_attr('password')
+            self.hashed_password = _hash_password(self.email, self.password)
+            del self.password
