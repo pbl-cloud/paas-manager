@@ -5,24 +5,13 @@ import os
 
 from .models import Jobs, Users
 from .forms import RegistrationForm
+from .auth import current_user, user_signed_in
 
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'jar'])
 
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
-
-
-# TODO: move to other module
-# TODO: cache result for current request
-def current_user():
-    if 'user_id' in session:
-        return Users.find(session['user_id'])
-    return None
-
-
-def user_signed_in():
-    return current_user() is not None
 
 
 @app.route("/")
@@ -74,13 +63,3 @@ def login():
 def logout():
     session.pop('user_id', None)
     return redirect(url_for('index'))
-
-
-@app.context_processor
-def inject_current_user():
-    return {'current_user': current_user}
-
-
-@app.context_processor
-def inject_user_signed_in():
-    return {'user_signed_in': user_signed_in}
