@@ -5,6 +5,7 @@ os.environ['PAAS_MANAGER_ENV'] = 'test'
 
 from paas_manager.app.models.users import Users
 
+
 class TestUsers(unittest.TestCase):
     users = Users()
 
@@ -18,7 +19,8 @@ class TestUsers(unittest.TestCase):
         self.assertTrue((Users.is_registered('test@test')))
 
     def test_verify_success(self):
-        self.assertEqual(Users.verify_password('test@test', 'test'), self.users.user_id('test@test'))
+        self.assertEqual(
+            Users.verify_password('test@test', 'test'), self.users.user_id('test@test'))
 
     def test_verify_failed(self):
         self.assertEqual(Users.verify_password('test@test', 'pass'), None)

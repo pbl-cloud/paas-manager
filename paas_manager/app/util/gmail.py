@@ -27,7 +27,8 @@ def send_via_gmail(from_addr, to_addr, body):
 
 
 def gmail(message, to_addr):
-    body = create_message('pbl.notification@gmail.com', to_addr, '[Notification]', message, 'ISO-2022-JP')
+    body = create_message(
+        'pbl.notification@gmail.com', to_addr, '[Notification]', message, 'ISO-2022-JP')
     send_via_gmail('pbl.notification@gmail.com', to_addr, body)
     return
 
@@ -41,6 +42,7 @@ if __name__ == '__main__':
     else:
         message = argvs[1]
 
-    body = create_message(from_addr, to_addr, '[Notification]', message, 'ISO-2022-JP')
+    body = create_message(
+        from_addr, to_addr, '[Notification]', message, 'ISO-2022-JP')
 
     send_via_gmail(from_addr, to_addr, body)

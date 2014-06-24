@@ -6,12 +6,13 @@ CONFIG_DIR = path.join(CURRENT_DIR, '..', 'config')
 CONFIG_FILE = path.join(CONFIG_DIR, 'paas_manager.yml')
 LOCAL_CONFIG_FILE = path.join(CONFIG_DIR, 'paas_manager.local.yml')
 
+
 def dict_merge(a, b):
     if not isinstance(b, dict):
         return b
     for k, v in b.items():
         if k in a and isinstance(a[k], dict):
-                a[k] = dict_merge(a[k], v)
+            a[k] = dict_merge(a[k], v)
         else:
             a[k] = v
     return a

@@ -34,7 +34,8 @@ class TestJobs(unittest.TestCase):
 
     def test_status_finished(self):
         self.jobs.update_output(self.jobid, 'stdout', 'stderr')
-        self.assertEqual(self.jobs.fetch_job(self.jobid)[3], self.jobs.FINISHED)
+        self.assertEqual(
+            self.jobs.fetch_job(self.jobid)[3], self.jobs.FINISHED)
 
     def test_start_job(self):
         self.assertEqual(self.jobs.fetch_job(self.jobid)[3], self.jobs.WAITING)

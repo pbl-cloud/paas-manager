@@ -3,7 +3,9 @@ from kazoo.recipe.queue import LockingQueue
 from .. import config
 from ..hadoop_modules import HadoopModules
 
+
 class Manager:
+
     def __init__(self):
         super(Manager, self).__init__()
 

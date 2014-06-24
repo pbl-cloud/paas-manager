@@ -7,6 +7,7 @@ from ... import config
 if os.environ.get('PAAS_MANAGER_ENV') == 'test':
     config['mysql']['database'] += '_test'
 
+
 class DatabaseConnector():
     connect = mysql.connector.connect(**config['mysql'])
     cursor = connect.cursor()
@@ -37,7 +38,6 @@ class DatabaseConnector():
     def _conditions_to_str(cls, conditions):
         return ' AND '.join(map(cls._val_to_cond, conditions.items()))
 
-
     @classmethod
     def _make_query(cls, conditions, options):
         if 'one' in options:
@@ -52,7 +52,8 @@ class DatabaseConnector():
             query_template += " limit %s"
             args += (options['limit'],)
 
-        query = query_template.format(table=cls.table, conditions=cls._conditions_to_str(conditions))
+        query = query_template.format(
+            table=cls.table, conditions=cls._conditions_to_str(conditions))
         cls.cursor.execute(query, args)
         if 'one' in options:
             return cls.hydrate_obj(cls.cursor.fetchone())
@@ -72,7 +73,7 @@ class DatabaseConnector():
 
     @classmethod
     def find_by(cls, conditions):
-        return cls._make_query(conditions, { 'one': True })
+        return cls._make_query(conditions, {'one': True})
 
     @classmethod
     def remove_all(cls):
@@ -91,7 +92,8 @@ class DatabaseConnector():
         query_template = "insert into {table} ({fields}) values ({values})"
         fields = ', '.join([str(key) for key in self._args.keys()])
         values = ', '.join(['%s' for _ in self._args.values()])
-        query = query_template.format(table=self.table, fields=fields, values=values)
+        query = query_template.format(
+            table=self.table, fields=fields, values=values)
         self.cursor.execute(query, tuple(self._args.values()))
         if self.is_new():
             self.id = self.cursor.lastrowid
@@ -102,7 +104,6 @@ class DatabaseConnector():
         query_template = "delete from {table} where id=%s"
         query = query_template.format(table=self.table)
         cls.cursor.execute(query, (self.id,))
-
 
     def _add_attr(self, key, value):
         setattr(self, key, value)
