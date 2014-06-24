@@ -2,7 +2,6 @@ from wtforms import Form, TextField, PasswordField, validators
 from ..models import Users
 
 
-# TODO: add unique user validation
 class RegistrationForm(Form):
     email = TextField('メールアドレス', [validators.Length(min=6)])
     password = PasswordField('パスワード', [validators.Length(min=4)])
