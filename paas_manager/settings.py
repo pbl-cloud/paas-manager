@@ -21,6 +21,7 @@ def get_config():
     with open(CONFIG_FILE, 'r') as f:
         conf = yaml.load(f)
 
+    local_conf = {}
     if path.exists(LOCAL_CONFIG_FILE):
         with open(LOCAL_CONFIG_FILE, 'r') as f:
             local_conf = yaml.load(f)
