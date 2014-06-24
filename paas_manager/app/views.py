@@ -16,6 +16,18 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
+# TODO: move to other module
+# TODO: cache result for current request
+def current_user():
+    if 'user_id' in session:
+        return Users.find(session['user_id'])
+    return None
+
+
+def user_signed_in():
+    return current_user() is not None
+
+
 @app.route("/")
 def index():
     items = []
@@ -54,15 +66,25 @@ def register():
 
 @app.route('/login', methods=['POST'])
 def login():
-    id = users.authorize(request.form['email'], request.form['password'])
-    if id:
-        session['user_id'] = id
+    user = users.authorize(request.form['email'], request.form['password'])
+    if user:
+        session['user_id'] = user.id
         return redirect(url_for('index'))
-    return render_template('login.html')
+    return redirect(url_for('index'))
 
 
-@app.route('/logout', methods=['GET'])
+@app.route('/logout', methods=['POST'])
 def logout():
     #セッションからユーザ名を取り除く (ログアウトの状態にする)
-    session.pop('username', None)
+    session.pop('user_id', None)
     return redirect(url_for('index'))
+
+
+@app.context_processor
+def inject_current_user():
+    return {'current_user': current_user}
+
+
+@app.context_processor
+def inject_user_signed_in():
+    return {'user_signed_in': user_signed_in}
