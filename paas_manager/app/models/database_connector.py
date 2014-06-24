@@ -86,10 +86,14 @@ class DatabaseConnector():
         return cls._make_query(conditions, {})
 
     @classmethod
-    def exists(cls, conditions=None):
+    def count(cls, conditions=None):
         options = {'fields': 'id'}
         result = cls.query(conditions, options)
-        return len(result) > 0
+        return len(result)
+
+    @classmethod
+    def exists(cls, conditions=None):
+        return cls.count(conditions) > 0
 
     @classmethod
     def create(cls, args=None):
