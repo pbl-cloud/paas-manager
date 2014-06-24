@@ -14,3 +14,6 @@ hadoop:
 
 security:
   secret: "I'M NOT VERY SECRET. OVERRIDE ME"
+
+app:
+  upload_folder: ~/jars

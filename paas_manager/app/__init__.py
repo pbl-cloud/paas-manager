@@ -1,9 +1,10 @@
 from flask import Flask
 from os import mkdir
-from os.path import expanduser, join, exists
+from os.path import expanduser, exists
 from ..settings import config
 
-UPLOAD_FOLDER = join(expanduser("~"), "jars")
+
+UPLOAD_FOLDER = expanduser(config['app']['upload_folder'])
 
 if not exists(UPLOAD_FOLDER):
     mkdir(UPLOAD_FOLDER)
