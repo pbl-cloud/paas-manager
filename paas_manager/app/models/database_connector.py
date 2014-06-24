@@ -21,10 +21,11 @@ class DatabaseConnector():
     cursor = connect.cursor()
 
     def __init__(self, args=None):
-        self.id = None
         if args is None:
             args = {}
-        self._args = args
+        self.__dict__ = args
+        if not hasattr(self, 'id'):
+            self.id = None
         for k, v in args.items():
             setattr(self, k, v)
 
@@ -96,17 +97,28 @@ class DatabaseConnector():
     def before_save(self):
         pass
 
+    def _insert(self):
+        query_template = "insert into {table} ({fields}) values ({values})"
+        fields = ', '.join([str(key) for key in self.__dict__.keys()])
+        values = ', '.join(['%s' for _ in self.__dict__.values()])
+        query = query_template.format(
+            table=self.table, fields=fields, values=values)
+        self.cursor.execute(query, tuple(self.__dict__.values()))
+        self.id = self.cursor.lastrowid
+
+    def _update(self):
+        query_template = "update {table} set {fields} where id=%s"
+        fields = ', '.join(map(self._val_to_cond, self.__dict__.items()))
+        query = query_template.format(table=self.table, fields=fields)
+        self.cursor.execute(query, tuple(self.__dict__) + (self.id,))
+
     @db_action
     def save(self):
         self.before_save()
-        query_template = "insert into {table} ({fields}) values ({values})"
-        fields = ', '.join([str(key) for key in self._args.keys()])
-        values = ', '.join(['%s' for _ in self._args.values()])
-        query = query_template.format(
-            table=self.table, fields=fields, values=values)
-        self.cursor.execute(query, tuple(self._args.values()))
         if self.is_new():
-            self.id = self.cursor.lastrowid
+            self._insert()
+        else:
+            self._update()
         return self
 
     @db_action
@@ -114,13 +126,3 @@ class DatabaseConnector():
         query_template = "delete from {table} where id=%s"
         query = query_template.format(table=self.table)
         cls.cursor.execute(query, (self.id,))
-
-    def _add_attr(self, key, value):
-        setattr(self, key, value)
-        self._args[key] = value
-
-    def _del_attr(self, key):
-        if hasattr(self, key):
-            delattr(self, key)
-        if key in self._args:
-            del self._args[key]
