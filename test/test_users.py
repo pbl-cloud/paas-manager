@@ -40,10 +40,16 @@ class TestUsers(unittest.TestCase):
         user = Users.find_by({'email': 'test@test'})
         self.assertEqual('test@test', user.email)
 
-    def test_update_user(self):
+    def test_simple_update_user(self):
         user = Users.create({'email': 'foo@bar'})
         self.assertEqual('foo@bar', user.email)
         user.email = 'foo@baz'
+        user.save()
+        self.assertEqual('foo@baz', user.email)
+
+    def test_update_user(self):
+        user = Users.create({'email': 'bar@bar'})
+        user.update({'email': 'foo@baz'})
         user.save()
         self.assertEqual('foo@baz', user.email)
 

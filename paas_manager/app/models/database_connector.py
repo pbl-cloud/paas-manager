@@ -115,6 +115,11 @@ class DatabaseConnector():
         query = query_template.format(table=cls.table)
         cls.cursor.execute(query)
 
+    def update(self, args):
+        for k, v in args.items():
+            setattr(self, k, v)
+        self.save()
+
     def is_new(self):
         return self.id is None
 

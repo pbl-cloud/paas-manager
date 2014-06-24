@@ -2,10 +2,10 @@ from kazoo.client import KazooClient
 from kazoo.recipe.queue import LockingQueue
 from .. import config
 from ..hadoop_modules import HadoopModules
+from ..app.models import Jobs
 
 
 class Manager:
-
     def __init__(self):
         super(Manager, self).__init__()
 
@@ -49,9 +49,13 @@ class Manager:
         else:
             self.execute_job_no_lock(id)
 
-    def hadoop_callback(self):
+    def hadoop_callback(self, job_id, stdout, stderr):
+        job = Jobs.find(job_id)
+        if job:
+            job.update({'stdout': stdout, 'stderr': stderr})
         self.execute_next_job()
 
     def execute_job_no_lock(self, id):
         path, _ = self.zk.get("/jobs/{0}/jar_path".format(id))
-        self.hadoop.start_hadoop(path.decode(), [], self.hadoop_callback)
+        callback = lambda out, err: self.hadoop_callback(id, out, err)
+        self.hadoop.start_hadoop(path.decode(), [], callback)
