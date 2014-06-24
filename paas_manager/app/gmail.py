@@ -33,12 +33,13 @@ def gmail(message, to_addr):
 
 if __name__ == '__main__':
     from_addr = 'pbl.notification@gmail.com'
-    to_addr = ''
 
-    if (argc < 2):
-    	message = u'no message.'
+    if (argc < 3):
+    	print 'USAGE: python gmail.py address message'
+        raise SystemExit(0)
     else:
-	message = unicode(argvs[1], 'utf-8')
+        to_addr = unicode(argvs[1], 'utf-8')
+        message = unicode(argvs[2], 'utf-8')
  
     body = create_message(from_addr, to_addr, u'[Notification]', message, 'ISO-2022-JP')
 
