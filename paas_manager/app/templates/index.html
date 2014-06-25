@@ -2,22 +2,27 @@
 {% block body %}
     <h1>Hadoooooooop!</h1>
 
-    <form method="post" enctype="multipart/form-data" action="/upload">
+<!--     <form method="post" enctype="multipart/form-data" action="/upload">
         <h2>jar File</h2>
         <input type="file" id="file-input" name="file" style="display: none;">
         <button type="button" class="btn btn-primary" id="file-btn">ファイルを選択</button>
-        <script type="text/javascript">
-
-        </script>
         <button type="submit" class="btn btn-success">アップロード</button>
     </form>
+ -->
+    <div class="row">
+      <div class="col-xs-1 col-xs-offset-10">
+        <button class="btn btn-primary" data-toggle="modal" data-target="#job-creation-modal" data-backdrop="static" data-keyboard="false">
+          ジョブ作成
+        </button>
+      </div>
+    </div>
 
-		<table class="table table-striped">
+		<table class="table table-striped top-buffer">
 			<tbody>
 				<tr>
 					<th>id</th>
-					<th>filename</th>
-					<th>status</th>
+					<th>ファイル名</th>
+					<th>状態</th>
 				</tr>
       {% for job in jobs %}
 				<tr>
@@ -28,5 +33,7 @@
       {% endfor %}
 			</tbody>
 		</table>
+
+    {% include 'job_creation_modal.html' %}
 
 {% endblock %}

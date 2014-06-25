@@ -26,3 +26,13 @@ td  {
   width: 40%;
   margin: 10px auto;
 }
+
+.top-buffer {
+  margin-top:20px;
+}
+
+.invisible {
+  visibility: hidden;
+  width: 0;
+  height: 0;
+}

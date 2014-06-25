@@ -1,9 +1,10 @@
 from . import app
 from flask import render_template, request, redirect, url_for, session, flash
+from werkzeug.datastructures import CombinedMultiDict
 import os
 
 from .models import Jobs, Users
-from .forms import RegistrationForm
+from .forms import RegistrationForm, JobCreationForm
 from .auth import current_user, user_signed_in
 from . import queue_manager
 
@@ -25,32 +26,33 @@ def needs_authentication(fn):
 
 
 @app.route("/")
-def index():
+def index(job_form=None):
+    if job_form is None:
+        job_form = JobCreationForm(request.form)
     jobs = []
     if user_signed_in():
         jobs = Jobs.query(user_id=current_user().id)
-    return render_template("index.html", jobs=jobs)
+    return render_template("index.html", jobs=jobs, job_form=job_form)
 
 
 @app.route('/upload', methods=['POST'])
 @needs_authentication
 def upload():
-    if request.method == 'POST':
-        file = request.files['file']
-        # email = request.form['email']
-
-        if file and allowed_file(file.filename):
-            job = Jobs.create(user_id=current_user().id, filename=file.filename)
-            job.save_file(file)
-            queue_manager.enqueue_job(job)
-            #gmail(file.filename, email)
-
-    return redirect(url_for('index'))
+    job_form = JobCreationForm()
+    if request.method == 'POST' and job_form.validate_on_submit():
+        f = request.files['jar_file']
+        job = Jobs.create(user_id=current_user().id, filename=f.filename)
+        job.save_file(f)
+        queue_manager.enqueue_job(job)
+        #gmail(file.filename, email)
+        flash('ジョブが提出されました。', 'success')
+        return redirect(url_for('index'))
+    return index(job_form)
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    form = RegistrationForm(request.form)
+    form = RegistrationForm()
     if request.method == 'POST' and form.validate():
         user = Users.create(**form.data)
         session['user_id'] = user.id

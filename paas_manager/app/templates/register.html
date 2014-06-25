@@ -6,6 +6,8 @@
     <form class="form" method="POST" action="/register">
       {{ render_field(form.email) }}
       {{ render_field(form.password) }}
+
+      {{ form.csrf_token }}
       <input type="submit" value="登録する" class="btn btn-primary pull-right">
     </form>
 </div>
