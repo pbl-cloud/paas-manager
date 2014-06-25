@@ -31,7 +31,7 @@ class TestJobs(unittest.TestCase):
         self.assertEqual(self.job.stderr, 'stderr')
 
     def test_start_job(self):
-        self.job.update_one('status', Jobs.RUNNING)
+        self.job.update(status=Jobs.RUNNING)
         self.assertEqual(Jobs.RUNNING, self.job.status)
 
     def test_status_finished(self):

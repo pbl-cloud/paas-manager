@@ -114,10 +114,6 @@ class DatabaseConnector():
             setattr(self, k, v)
         self.save()
 
-    def update_one(self, key, value):
-        setattr(self, key, value)
-        self.save()
-
     def is_new(self):
         return self.id is None
 
