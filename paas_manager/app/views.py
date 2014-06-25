@@ -30,6 +30,16 @@ def index(job_form=None):
     return render_template("index.html", jobs=jobs, job_form=job_form)
 
 
+@app.route("/jobs/<int:job_id>")
+def show_job(job_id):
+    job = Jobs.find(job_id)
+    if not job:
+        # FIXME: use 404 properly
+        flash("ジョブが見つかりませんでした。", 'danger')
+        return redirect(url_for('index'))
+    return render_template("job.html", job=job)
+
+
 @app.route('/upload', methods=['POST'])
 @needs_authentication
 def upload():

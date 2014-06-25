@@ -18,21 +18,23 @@
     </div>
 
 		<table class="table table-striped top-buffer">
-			<tbody>
-				<tr>
-					<th>Id</th>
-					<th>ファイル名</th>
+      <theader>
+        <tr>
+          <th>Id</th>
+          <th>ファイル名</th>
           <th>引数</th>
           <th>Try No</th>
-					<th>状態</th>
-				</tr>
+          <th>状態</th>
+        </tr>
+      </theader>
+			<tbody>
       {% for job in jobs %}
-				<tr>
-          <td>{{ job.id }}</td>
+				<tr class="clickable">
+          <td><a href="/jobs/{{job.id}}">{{ job.id }}</a></td>
 					<td>{{ job.filename }}</td>
           <td>{{ job.arguments }}</td>
           <td>{{ job.retries }}</td>
-					<td>{{ job.human_status() }}</td>
+					<td>{{ job.human_status }}</td>
 				</tr>
       {% endfor %}
 			</tbody>

@@ -36,6 +36,7 @@ class Jobs(DatabaseConnector):
         if hasattr(self, 'filename'):
             self.filename = secure_filename(self.filename)
 
+    @property
     def human_status(self):
         if not hasattr(self, 'status'):
             return '不明'

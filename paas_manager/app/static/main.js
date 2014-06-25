@@ -14,6 +14,13 @@ $(function() {
     $('#selected-file').text(filename);
   });
 
+  $('tr.clickable').click(function () {
+    var $firstCell = $(this).children('td').first();
+    var $link = $firstCell.children('a').first();
+    if ($link.length > 0) {
+      window.location = $link.attr('href');
+    }
+  });
 
   if (window.showOnLoad && window.showOnLoad.length > 0) {
     for (var i = 0; i < window.showOnLoad.length; i++) {
