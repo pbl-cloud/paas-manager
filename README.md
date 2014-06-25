@@ -36,18 +36,15 @@ python runserver.py
 class Users extends DatabaseConnector:
     table = users
 
-user = Users.create({'email': 'foo@foo.bar', 'password': 'foobar'})
+user = Users.create(email='foo@foo.bar', password='foobar')
 user.email = 'foo@foo.baz'
 user.password = 'abcdef'
 user.save
 
-assert(Users.find(user.id).id == Users.find_by({'email': 'foo@foo.baz'}).id)
+assert(Users.find(user.id).id == Users.find_by(email='foo@foo.baz').id)
 
-user.update({'email': 'foo@bar.baz', 'password': 'barbaz'})
+user.update(email='foo@bar.baz', password='barbaz')
 assert(user.email == 'foo@bar.baz')
-
-user.update_one('email', 'bar@foo.bar')
-assert(user.email == 'bar@foo.bar')
 
 user.delete()
 ```
