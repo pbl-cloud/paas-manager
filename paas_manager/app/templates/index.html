@@ -20,14 +20,18 @@
 		<table class="table table-striped top-buffer">
 			<tbody>
 				<tr>
-					<th>id</th>
+					<th>Id</th>
 					<th>ファイル名</th>
+          <th>引数</th>
+          <th>Try No</th>
 					<th>状態</th>
 				</tr>
       {% for job in jobs %}
 				<tr>
           <td>{{ job.id }}</td>
 					<td>{{ job.filename }}</td>
+          <td>{{ job.arguments }}</td>
+          <td>{{ job.retries }}</td>
 					<td>{{ job.human_status() }}</td>
 				</tr>
       {% endfor %}

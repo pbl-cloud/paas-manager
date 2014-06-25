@@ -21,3 +21,7 @@ security:
 
 app:
   upload_folder: ~/jars
+
+logging:
+  level: INFO
+  filename: logs/application.log

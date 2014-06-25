@@ -8,12 +8,6 @@ from .forms import RegistrationForm, JobCreationForm
 from .auth import current_user, user_signed_in
 from . import queue_manager
 
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'jar'])
-
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
-
 
 def needs_authentication(fn):
     def wrapped(*args, **kwargs):
@@ -31,7 +25,8 @@ def index(job_form=None):
         job_form = JobCreationForm(request.form)
     jobs = []
     if user_signed_in():
-        jobs = Jobs.query(user_id=current_user().id)
+        options = {'order': 'id desc'}
+        jobs = Jobs.query(user_id=current_user().id, _options=options)
     return render_template("index.html", jobs=jobs, job_form=job_form)
 
 
@@ -40,9 +35,8 @@ def index(job_form=None):
 def upload():
     job_form = JobCreationForm()
     if request.method == 'POST' and job_form.validate_on_submit():
-        f = request.files['jar_file']
-        job = Jobs.create(user_id=current_user().id, filename=f.filename)
-        job.save_file(f)
+        args = request.form['arguments']
+        job = Jobs.submit(current_user().id, request.files['jar_file'], args)
         queue_manager.enqueue_job(job)
         #gmail(file.filename, email)
         flash('ジョブが提出されました。', 'success')

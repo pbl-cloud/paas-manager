@@ -59,6 +59,10 @@ class DatabaseConnector():
             query_template += " where {conditions}"
             args += tuple(conditions.values())
 
+        if 'order' in options:
+            # FIXME: strange behavior with prepared query
+            query_template += " order by " + options['order']
+
         if 'limit' in options:
             query_template += " limit %s"
             args += (options['limit'],)
@@ -109,6 +113,14 @@ class DatabaseConnector():
         query_template = "delete from {table}"
         query = query_template.format(table=cls.table)
         cls.cursor.execute(query)
+
+    @classmethod
+    def update_entity(cls, id, **kwargs):
+        entity = cls.find(id)
+        if entity:
+            entity.update(**kwargs)
+            return entity
+        return None
 
     def update(self, **kwargs):
         for k, v in kwargs.items():

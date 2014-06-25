@@ -1,9 +1,10 @@
 from flask import Flask
 from os import mkdir
-from os.path import expanduser, exists
+from os.path import expanduser, exists, dirname
 import sys
 from kazoo.handlers.threading import TimeoutError
 import signal
+import logging
 
 from ..settings import config
 from .util import StreamConsumingMiddleware

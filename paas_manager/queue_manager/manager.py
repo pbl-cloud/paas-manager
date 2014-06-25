@@ -1,6 +1,7 @@
 from kazoo.client import KazooClient
 from kazoo.recipe.queue import LockingQueue
 import threading
+import logging as log
 
 from .. import config
 from ..app.hadoop_modules import HadoopModules
@@ -25,7 +26,14 @@ class Manager:
 
         self.lock = self.zk.Lock('/settings/lock', 'lock')
 
-        self._try_execute_job()
+        self._start_polling()
+
+    def _start_polling(self):
+        t = threading.Thread(
+            target=self._try_execute_job,
+            daemon=True
+        )
+        t.start()
 
     def _try_execute_job(self):
         if not self._terminated:
@@ -33,6 +41,8 @@ class Manager:
             self.execute_next_job()
 
     def enqueue_job(self, job):
+        if job.id is None:
+            return
         success = False
         with self.lock:
             node = "/jobs/{0}".format(job.id)
@@ -41,6 +51,7 @@ class Manager:
                 self.zk.create(node + "/jar_path", job.file_full_path().encode())
                 self.zk.create(node + "/retries", '0'.encode())
                 success = True
+                log.info("Enqueued job {0}".format(job.id))
         return success
 
     def execute_next_job(self):
@@ -55,7 +66,9 @@ class Manager:
             if self._check_retries(next_job_id):
                 return self.execute_job(next_job_id, False)
             else:
+                Jobs.update_entity(next_job_id, status=Jobs.FAILED)
                 self._delete_job(next_job_id)
+                log.info("Removing job {0} after 3 failures".format(next_job_id))
         self.execute_next_job()
 
     def _delete_job(self, id):
@@ -72,23 +85,25 @@ class Manager:
         else:
             self.execute_job_no_lock(id)
 
-    def hadoop_callback(self, job_id, stdout, stderr):
+    def hadoop_callback(self, job_id, return_code, stdout, stderr):
         job = Jobs.find(job_id)
         if job:
-            job.finish(stdout, stderr)
+            job.update(stdout=stdout, stderr=stderr)
         with self.lock:
             self._set_running(False)
-            self._delete_job(job_id)
+            if return_code == 0:
+                job.update(status=Jobs.FINISHED)
+                self._delete_job(job_id)
 
     def execute_job_no_lock(self, id):
+        log.info("Executing job {0}".format(id))
         self._set_running(True)
         self._increase_retries(id)
         job = Jobs.find(id)
-        if job:
-            job.update(status=Jobs.RUNNING)
+        job.update_entity(id, status=Jobs.RUNNING)
         path, _ = self.zk.get("/jobs/{0}/jar_path".format(id))
-        callback = lambda out, err: self.hadoop_callback(id, out, err)
-        self.hadoop.start_hadoop(path.decode(), ["pi", "10", "10"], callback)
+        callback = lambda ret, out, err: self.hadoop_callback(id, ret, out, err)
+        self.hadoop.start_hadoop(path.decode(), job.arguments_list(), callback)
 
     def _set_running(self, is_running):
         value = ('true' if is_running else 'false').encode()
@@ -102,4 +117,5 @@ class Manager:
         key = "/jobs/{0}/retries".format(id)
         retries, _ = self.zk.get(key)
         new_retries = int(retries.decode()) + 1
+        Jobs.update_entity(id, retries=new_retries)
         self.zk.set(key, str(new_retries).encode())

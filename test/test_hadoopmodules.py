@@ -15,7 +15,8 @@ class Test_HadoopModules(unittest.TestCase):
         jar_path = "path"
         args = []
 
-        def callback(out, err):
+        def callback(ret, out, err):
+            self.assertEqual(0, ret)
             self.assertEqual(out, "fin\n")
             self.assertEqual(err, "err\n")
 
@@ -25,14 +26,16 @@ class Test_HadoopModules(unittest.TestCase):
 
     def test_exec_hadoop(self):
 
-        def callback(out, err):
+        def callback(ret, out, err):
+            self.assertEqual(0, ret)
             self.assertEqual(out, "fin\n")
             self.assertEqual(err, "err\n")
 
         self.hadoopModules.exec_hadoop(self.command, callback)
 
     def test_duplicate_threads(self):
-        def callback(out, err):
+        def callback(ret, out, err):
+            self.assertEqual(0, ret)
             self.assertEqual(out, "fin\n")
             self.assertEqual(err, "err\n")
         command = [self.mock_path]

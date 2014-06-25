@@ -53,7 +53,7 @@ class HadoopModules(metaclass=Singleton):
         p = subprocess.Popen(
             command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = p.communicate()
-        callback(bytes.decode(out), bytes.decode(err))
+        callback(p.returncode, bytes.decode(out), bytes.decode(err))
 
     def _get_output_path(self, path):
         prefix = datetime.now().isoformat().replace(':', '-').replace('.', '')

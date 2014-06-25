@@ -10,9 +10,17 @@ class Jobs(DatabaseConnector):
     WAITING = 0
     RUNNING = 1
     FINISHED = 2
+    FAILED = 3
 
-    def finish(self, stdout, stderr):
-        self.update(stdout=stdout, stderr=stderr, status=Jobs.FINISHED)
+    @classmethod
+    def submit(cls, user_id, jar_file, args):
+        job = cls.create(
+            user_id=user_id,
+            filename=jar_file.filename,
+            arguments=args
+        )
+        job.save_file(jar_file)
+        return job
 
     def file_full_path(self):
         if not hasattr(self, 'filename'):
@@ -34,5 +42,11 @@ class Jobs(DatabaseConnector):
         return {
             Jobs.WAITING: '待機中',
             Jobs.RUNNING: '実行中',
-            Jobs.FINISHED: '完了'
+            Jobs.FINISHED: '完了',
+            Jobs.FAILED: '失敗'
         }[self.status]
+
+    def arguments_list(self):
+        if not hasattr(self, 'arguments') or self.arguments is None:
+            return []
+        return self.arguments.split(' ')
