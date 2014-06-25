@@ -26,10 +26,10 @@ def needs_authentication(fn):
 
 @app.route("/")
 def index():
-    items = []
+    jobs = []
     if user_signed_in():
-        items = Jobs.query(user_id=current_user().id)
-    return render_template("index.html", items=items)
+        jobs = Jobs.query(user_id=current_user().id)
+    return render_template("index.html", jobs=jobs)
 
 
 @app.route('/upload', methods=['POST'])

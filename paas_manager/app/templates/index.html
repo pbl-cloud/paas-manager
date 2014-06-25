@@ -15,20 +15,18 @@
 		<table class="table table-striped">
 			<tbody>
 				<tr>
-					<th>name</th>
+					<th>id</th>
 					<th>filename</th>
 					<th>status</th>
 				</tr>
-      {% for item in items %}
+      {% for job in jobs %}
 				<tr>
-					<td>{{ item.name }}</td>
-					<td>{{ item.filename }}</td>
-					<td>{{ item.status }}</td>
+          <td>{{ job.id }}</td>
+					<td>{{ job.filename }}</td>
+					<td>{{ job.human_status() }}</td>
 				</tr>
       {% endfor %}
 			</tbody>
 		</table>
-
-    <br>
 
 {% endblock %}

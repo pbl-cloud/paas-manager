@@ -27,3 +27,12 @@ class Jobs(DatabaseConnector):
     def before_save(self):
         if hasattr(self, 'filename'):
             self.filename = secure_filename(self.filename)
+
+    def human_status(self):
+        if not hasattr(self, 'status'):
+            return '不明'
+        return {
+            Jobs.WAITING: '待機中',
+            Jobs.RUNNING: '実行中',
+            Jobs.FINISHED: '完了'
+        }[self.status]
