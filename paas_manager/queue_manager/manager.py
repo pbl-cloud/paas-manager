@@ -52,7 +52,7 @@ class Manager:
     def hadoop_callback(self, job_id, stdout, stderr):
         job = Jobs.find(job_id)
         if job:
-            job.update({'stdout': stdout, 'stderr': stderr})
+            job.update(stdout=stdout, stderr=stderr)
         self.execute_next_job()
 
     def execute_job_no_lock(self, id):

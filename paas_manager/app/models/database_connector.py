@@ -20,14 +20,10 @@ class DatabaseConnector():
     connect = mysql.connector.connect(**config['mysql'])
     cursor = connect.cursor()
 
-    def __init__(self, args=None):
-        if args is None:
-            args = {}
-        self.__dict__ = args
+    def __init__(self, **kwargs):
+        self.__dict__ = kwargs
         if not hasattr(self, 'id'):
             self.id = None
-        for k, v in args.items():
-            setattr(self, k, v)
 
     @classmethod
     def hydrate_obj(cls, values):
@@ -78,35 +74,33 @@ class DatabaseConnector():
             return [cls.hydrate_obj(obj) for obj in cls.cursor.fetchall()]
 
     @classmethod
-    def query(cls, conditions=None, options=None):
-        if conditions is None:
-            conditions = {}
-        if options is None:
-            options = {}
-        return cls._make_query(conditions, {})
+    def query(cls, **kwargs):
+        options = kwargs.pop('options', {})
+        return cls._make_query(kwargs, options)
 
     @classmethod
-    def count(cls, conditions=None):
-        options = {'fields': 'id'}
-        result = cls.query(conditions, options)
+    def count(cls, **kwargs):
+        kwargs['options'] = {'fields': ['id']}
+        result = cls.query(**kwargs)
         return len(result)
 
     @classmethod
-    def exists(cls, conditions=None):
-        return cls.count(conditions) > 0
+    def exists(cls, **kwargs):
+        return cls.count(**kwargs) > 0
 
     @classmethod
-    def create(cls, args=None):
-        obj = cls(args)
+    def create(cls, **kwargs):
+        obj = cls(**kwargs)
         return obj.save()
 
     @classmethod
     def find(cls, id):
-        return cls.find_by({'id': id})
+        return cls.find_by(id=id)
 
     @classmethod
-    def find_by(cls, conditions):
-        return cls._make_query(conditions, {'one': True})
+    def find_by(cls, **kwargs):
+        options = {'one': True}
+        return cls._make_query(kwargs, options)
 
     @classmethod
     @db_action
@@ -115,8 +109,8 @@ class DatabaseConnector():
         query = query_template.format(table=cls.table)
         cls.cursor.execute(query)
 
-    def update(self, args):
-        for k, v in args.items():
+    def update(self, **kwargs):
+        for k, v in kwargs.items():
             setattr(self, k, v)
         self.save()
 

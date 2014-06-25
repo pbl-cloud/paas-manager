@@ -11,12 +11,13 @@ def _hash_password(email, password):
         hashed_password = hashlib.sha1(hashed_password).hexdigest().encode()
     return hashed_password.decode()
 
+
 class Users(DatabaseConnector):
     table = 'users'
 
     @classmethod
     def authorize(cls, email, password):
-        user = Users.find_by({'email': email})
+        user = Users.find_by(email=email)
         if user and user.hashed_password == _hash_password(email, password):
             return user
         return False

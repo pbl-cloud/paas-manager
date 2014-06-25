@@ -8,8 +8,4 @@ class Jobs(DatabaseConnector):
     FINISHED = 2
 
     def finish(self, stdout, stderr):
-        self.update({
-            'stdout': stdout,
-            'stderr': stderr,
-            'status': Jobs.FINISHED
-        })
+        self.update(stdout=stdout, stderr=stderr, status=Jobs.FINISHED)
