@@ -1,5 +1,5 @@
 from . import app
-from flask import render_template, request, redirect, url_for, session
+from flask import render_template, request, redirect, url_for, session, flash
 from werkzeug import secure_filename
 import os
 
@@ -14,6 +14,16 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
+def needs_authentication(fn):
+    def wrapped(*args, **kwargs):
+        if user_signed_in():
+            return fn(*args, **kwargs)
+        else:
+            flash('ログインしてください。', 'danger')
+            return redirect(url_for('index'))
+    return wrapped
+
+
 @app.route("/")
 def index():
     items = []
@@ -23,6 +33,7 @@ def index():
 
 
 @app.route('/upload', methods=['POST'])
+@needs_authentication
 def upload():
     if request.method == 'POST':
         file = request.files['file']

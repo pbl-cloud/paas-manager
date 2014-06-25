@@ -21,3 +21,8 @@ td  {
   border: 1px solid #DDD;
   color: #333;
 }
+
+.flashes {
+  width: 40%;
+  margin: 10px auto;
+}
