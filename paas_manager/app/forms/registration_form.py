@@ -13,6 +13,6 @@ class RegistrationForm(Form):
         if not Form.validate(self):
             return False
         if Users.exists({'email': self.email.data}):
-            self.email.errors.append('このメールアドレスが既に登録されています。')
+            self.email.errors.append('このメールアドレスは既に登録されています。')
             return False
         return True
