@@ -20,14 +20,10 @@ class DatabaseConnector():
     connect = mysql.connector.connect(**config['mysql'])
     cursor = connect.cursor()
 
-    def __init__(self, args=None):
-        if args is None:
-            args = {}
-        self.__dict__ = args
+    def __init__(self, **kwargs):
+        self.__dict__ = kwargs
         if not hasattr(self, 'id'):
             self.id = None
-        for k, v in args.items():
-            setattr(self, k, v)
 
     @classmethod
     def hydrate_obj(cls, values):
@@ -78,35 +74,33 @@ class DatabaseConnector():
             return [cls.hydrate_obj(obj) for obj in cls.cursor.fetchall()]
 
     @classmethod
-    def query(cls, conditions=None, options=None):
-        if conditions is None:
-            conditions = {}
-        if options is None:
-            options = {}
-        return cls._make_query(conditions, {})
+    def query(cls, **kwargs):
+        options = kwargs.pop('_options', {})
+        return cls._make_query(kwargs, options)
 
     @classmethod
-    def count(cls, conditions=None):
-        options = {'fields': 'id'}
-        result = cls.query(conditions, options)
+    def count(cls, **kwargs):
+        kwargs['_options'] = {'fields': ['id']}
+        result = cls.query(**kwargs)
         return len(result)
 
     @classmethod
-    def exists(cls, conditions=None):
-        return cls.count(conditions) > 0
+    def exists(cls, **kwargs):
+        return cls.count(**kwargs) > 0
 
     @classmethod
-    def create(cls, args=None):
-        obj = cls(args)
+    def create(cls, **kwargs):
+        obj = cls(**kwargs)
         return obj.save()
 
     @classmethod
     def find(cls, id):
-        return cls.find_by({'id': id})
+        return cls.find_by(id=id)
 
     @classmethod
-    def find_by(cls, conditions):
-        return cls._make_query(conditions, {'one': True})
+    def find_by(cls, **kwargs):
+        options = {'one': True}
+        return cls._make_query(kwargs, options)
 
     @classmethod
     @db_action
@@ -114,6 +108,11 @@ class DatabaseConnector():
         query_template = "delete from {table}"
         query = query_template.format(table=cls.table)
         cls.cursor.execute(query)
+
+    def update(self, **kwargs):
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+        self.save()
 
     def is_new(self):
         return self.id is None
@@ -132,9 +131,11 @@ class DatabaseConnector():
 
     def _update(self):
         query_template = "update {table} set {fields} where id=%s"
-        fields = ', '.join(map(self._val_to_cond, self.__dict__.items()))
+        items = self.__dict__.copy()
+        items.pop('id')
+        fields = ', '.join(map(self._val_to_cond, items.items()))
         query = query_template.format(table=self.table, fields=fields)
-        self.cursor.execute(query, tuple(self.__dict__) + (self.id,))
+        self.cursor.execute(query, tuple(items.values()) + (self.id,))
 
     @db_action
     def save(self):

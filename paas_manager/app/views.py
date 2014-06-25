@@ -28,7 +28,7 @@ def needs_authentication(fn):
 def index():
     items = []
     if user_signed_in():
-        items = Jobs.query({'user_id': current_user().id})
+        items = Jobs.query(user_id=current_user().id)
     return render_template("index.html", items=items)
 
 
@@ -42,10 +42,7 @@ def upload():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            Jobs.create({
-                'user_id': current_user().id,
-                'filename': file.filename
-            })
+            Jobs.create(user_id=current_user().id, filename=file.filename)
             #gmail(file.filename, email)
 
     return redirect(url_for('index'))
@@ -55,7 +52,7 @@ def upload():
 def register():
     form = RegistrationForm(request.form)
     if request.method == 'POST' and form.validate():
-        user = Users.create(form.data)
+        user = Users.create(**form.data)
         session['user_id'] = user.id
         return redirect(url_for('index'))
     return render_template('register.html', form=form)
