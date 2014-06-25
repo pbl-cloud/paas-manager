@@ -75,12 +75,12 @@ class DatabaseConnector():
 
     @classmethod
     def query(cls, **kwargs):
-        options = kwargs.pop('options', {})
+        options = kwargs.pop('_options', {})
         return cls._make_query(kwargs, options)
 
     @classmethod
     def count(cls, **kwargs):
-        kwargs['options'] = {'fields': ['id']}
+        kwargs['_options'] = {'fields': ['id']}
         result = cls.query(**kwargs)
         return len(result)
 
