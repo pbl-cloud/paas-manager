@@ -14,7 +14,7 @@ setup(
     include_package_data=True,
     zip_safe=True,
     test_suite='test',
-    install_requires=["kazoo"],
+    install_requires=open('requirements.txt').read().splitlines(),
     classifiers=[
         'Development Status :: 1 - Planning'
         'Environment :: Other Environment',

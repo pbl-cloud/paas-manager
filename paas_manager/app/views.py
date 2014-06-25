@@ -1,11 +1,11 @@
 from . import app
 from flask import render_template, request, redirect, url_for, session, flash
-from werkzeug import secure_filename
 import os
 
 from .models import Jobs, Users
 from .forms import RegistrationForm
 from .auth import current_user, user_signed_in
+from . import queue_manager
 
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'jar'])
 
@@ -40,9 +40,9 @@ def upload():
         # email = request.form['email']
 
         if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            Jobs.create(user_id=current_user().id, filename=file.filename)
+            job = Jobs.create(user_id=current_user().id, filename=file.filename)
+            job.save_file(file)
+            queue_manager.enqueue_job(job)
             #gmail(file.filename, email)
 
     return redirect(url_for('index'))
