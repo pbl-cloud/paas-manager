@@ -49,9 +49,14 @@ class DatabaseConnector():
 
     @classmethod
     def _make_query(cls, conditions, options):
+        if 'fields' in options:
+            fields = ', '.join(options['fields'])
+        else:
+            fields = '*'
+
         if 'one' in options:
             options['limit'] = 1
-        query_template = "select * from {table}"
+        query_template = "select {fields} from {table}"
         args = ()
         if conditions:
             query_template += " where {conditions}"
@@ -62,7 +67,10 @@ class DatabaseConnector():
             args += (options['limit'],)
 
         query = query_template.format(
-            table=cls.table, conditions=cls._conditions_to_str(conditions))
+            fields=fields,
+            table=cls.table,
+            conditions=cls._conditions_to_str(conditions)
+        )
         cls.cursor.execute(query, args)
         if 'one' in options:
             return cls.hydrate_obj(cls.cursor.fetchone())
@@ -70,15 +78,31 @@ class DatabaseConnector():
             return [cls.hydrate_obj(obj) for obj in cls.cursor.fetchall()]
 
     @classmethod
-    def find(cls, conditions=None):
+    def query(cls, conditions=None, options=None):
         if conditions is None:
             conditions = {}
+        if options is None:
+            options = {}
         return cls._make_query(conditions, {})
+
+    @classmethod
+    def count(cls, conditions=None):
+        options = {'fields': 'id'}
+        result = cls.query(conditions, options)
+        return len(result)
+
+    @classmethod
+    def exists(cls, conditions=None):
+        return cls.count(conditions) > 0
 
     @classmethod
     def create(cls, args=None):
         obj = cls(args)
         return obj.save()
+
+    @classmethod
+    def find(cls, id):
+        return cls.find_by({'id': id})
 
     @classmethod
     def find_by(cls, conditions):

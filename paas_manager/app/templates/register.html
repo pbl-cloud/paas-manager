@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% from "_formhelpers.html" import render_field %}
+{% block body %}
+<div class="span3">
+    <h2>登録</h2>
+    <form class="form" method="POST" action="/register">
+      {{ render_field(form.email) }}
+      {{ render_field(form.password) }}
+      <input type="submit" value="登録する" class="btn btn-primary pull-right">
+    </form>
+</div>
+{% endblock %}

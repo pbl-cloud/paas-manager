@@ -10,29 +10,31 @@ class TestUsers(unittest.TestCase):
     users = Users()
 
     def setUp(self):
-        Users.register_user('test@test', 'test')
+        self.user = Users.create({'email': 'test@test', 'password': 'test'})
 
     def tearDown(self):
         Users.remove_all()
 
-    def test_is_registered(self):
-        self.assertTrue((Users.is_registered('test@test')))
+    def test_exists(self):
+        self.assertTrue(Users.exists({'email': 'test@test'}))
+        self.assertFalse(Users.exists({'email': 'test@testbar'}))
 
-    def test_verify_success(self):
-        self.assertEqual(
-            Users.verify_password('test@test', 'test'), self.users.user_id('test@test'))
+    def test_authorize_success(self):
+        user = Users.authorize(self.user.email, 'test')
+        self.assertEqual(user.id, self.user.id)
 
-    def test_verify_failed(self):
-        self.assertEqual(Users.verify_password('test@test', 'pass'), None)
+    def test_authorize_fail(self):
+        user = Users.authorize('test@test', 'wrong_password')
+        self.assertFalse(user)
+
+    def test_count(self):
+        self.assertEqual(1, Users.count())
 
     def test_create(self):
-        self.assertEqual(1, len(Users.find()))
+        self.assertEqual(1, Users.count())
         user = Users.create({'email': 'foobar@bar.baz'})
         self.assertIsNotNone(user.id)
-        self.assertEqual(2, len(Users.find()))
-
-    def test_user_id(self):
-        id = Users.user_id('test@test')
+        self.assertEqual(2, Users.count())
 
     def test_find_by(self):
         user = Users.find_by({'email': 'test@test'})
