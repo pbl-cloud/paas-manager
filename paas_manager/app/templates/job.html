@@ -22,6 +22,7 @@
   </tr>
 </table>
 
+{% if job.is_done %}
 <div class="results">
   {% for title, name, output in [('標準出力', 'stdout', job.stdout),
                                  ('標準エラー出力', 'stderr', job.stderr)] %}
@@ -38,4 +39,6 @@
       {% endif %}
     </div>
   {% endfor %}
+{% endif %}
+
 {% endblock %}

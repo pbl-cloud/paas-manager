@@ -37,6 +37,12 @@ class Jobs(DatabaseConnector):
             self.filename = secure_filename(self.filename)
 
     @property
+    def is_done(self):
+        if not hasattr(self, 'status'):
+            return False
+        return self.status == Jobs.FINISHED or self.status == Jobs.FAILED
+
+    @property
     def human_status(self):
         if not hasattr(self, 'status'):
             return '不明'
