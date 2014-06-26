@@ -2,7 +2,6 @@ import sys
 import smtplib
 from email.mime.text import MIMEText
 from email.utils import formatdate
-import yaml
 from ... import config
 
 def create_message(from_addr, to_addr, subject, message, encoding):
