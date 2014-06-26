@@ -2,7 +2,8 @@ import sys
 import smtplib
 from email.mime.text import MIMEText
 from email.utils import formatdate
-from ... import config
+import yaml
+config = yaml.load( open('../../../config/paas_manager.local.yml').read() )
 
 def create_message(from_addr, to_addr, subject, message, encoding):
     body = MIMEText(message, 'plain', encoding)
@@ -25,7 +26,7 @@ def send_via_gmail(from_addr, to_addr, body):
 
 def gmail(message, to_addr):
     body = create_message(
-        'config['gmail']['user']', to_addr, '[Notification]', message, 'utf8')
+        config['gmail']['user'], to_addr, '[Notification]', message, 'utf8')
     send_via_gmail(config['gmail']['user'], to_addr, body)
     return
 
