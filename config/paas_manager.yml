@@ -17,3 +17,7 @@ security:
 
 app:
   upload_folder: ~/jars
+
+gmail:
+  user: OVERRIDE_ME_IN_LOCAL_SETTINGS
+  password: OVERRIDE_ME_IN_LOCAL_SETTINGS
