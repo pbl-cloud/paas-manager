@@ -3,7 +3,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.utils import formatdate
 import yaml
-config = yaml.load( open('../../../config/paas_manager.local.yml').read() )
+from ... import config
 
 def create_message(from_addr, to_addr, subject, message, encoding):
     body = MIMEText(message, 'plain', encoding)
