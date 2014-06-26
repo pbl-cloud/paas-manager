@@ -2,7 +2,6 @@ import logging
 import os
 
 from .settings import config
-from paas_manager.app import app
 
 
 root_logger = logging.getLogger()
@@ -23,3 +22,4 @@ if 'filename' in config['logging']:
     file_handler = logging.FileHandler(config['logging']['filename'])
     file_handler.setFormatter(log_formatter)
     root_logger.addHandler(file_handler)
+

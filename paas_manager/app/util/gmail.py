@@ -2,7 +2,7 @@ import sys
 import smtplib
 from email.mime.text import MIMEText
 from email.utils import formatdate
-
+from ... import config
 
 def create_message(from_addr, to_addr, subject, message, encoding):
     body = MIMEText(message, 'plain', encoding)
@@ -18,15 +18,15 @@ def send_via_gmail(from_addr, to_addr, body):
     s.ehlo()
     s.starttls()
     s.ehlo()
-    s.login('pbl.notification@gmail.com', 'uhouhouhouho')
+    s.login( config['gmail']['user'], config['gmail']['password'])
     s.sendmail(from_addr, [to_addr], body.as_string())
     s.close()
 
 
 def gmail(message, to_addr):
     body = create_message(
-        'pbl.notification@gmail.com', to_addr, '[Notification]', message, 'utf8')
-    send_via_gmail('pbl.notification@gmail.com', to_addr, body)
+        config['gmail']['user'], to_addr, '[Notification]', message, 'utf8')
+    send_via_gmail(config['gmail']['user'], to_addr, body)
     return
 
 

@@ -25,3 +25,8 @@ app:
 logging:
   level: INFO
   filename: logs/application.log
+
+gmail:
+  user: OVERRIDE_ME_IN_LOCAL_SETTINGS
+  password: OVERRIDE_ME_IN_LOCAL_SETTINGS
+

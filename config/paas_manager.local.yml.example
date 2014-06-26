@@ -1,3 +1,7 @@
 mysql:
   user: OVERRIDE_ME
   password: OVERRIDE_ME
+
+gmail:
+  user: OVERRIDE_ME
+  password: OVERRIDE_ME
