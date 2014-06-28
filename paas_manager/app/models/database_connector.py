@@ -10,8 +10,13 @@ if os.environ.get('PAAS_MANAGER_ENV') == 'test':
 
 def db_action(fn):
     def wrapped(*args, **kwargs):
-        res = fn(*args, **kwargs)
-        DatabaseConnector.connect.commit()
+        try:
+            res = fn(*args, **kwargs)
+            DatabaseConnector.connect.commit()
+        except (mysql.connector.InterfaceError, mysql.connector.OperationalError):
+            DatabaseConnector.connect.reconnect()
+            res = fn(*args, **kwargs)
+            DatabaseConnector.connect.commit()
         return res
     return wrapped
 
