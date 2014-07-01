@@ -1,0 +1,26 @@
+{% from "_formhelpers.html" import render_field %}
+
+<form class="form" method="post" enctype="multipart/form-data" action="/upload">
+  <div class="form-group">
+    {{ job_form.jar_file.label }}
+    {% if job_form.jar_file.errors %}
+      <span class="text-danger">
+        {{ job_form.jar_file.errors[0] }}
+      </span>
+    {% endif %}
+    <div class="row">
+      {{ job_form.jar_file(class="hidden") }}
+      <button type="button" class="btn" id="file-btn">ファイルを選択</button>
+      <span id="selected-file"></span>
+    </div>
+  </div>
+
+  {{ render_field(job_form.arguments) }}
+
+  {{ job_form.csrf_token }}
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+    <input type="submit" class="btn btn-primary" value="提出">
+  </div>
+</form>

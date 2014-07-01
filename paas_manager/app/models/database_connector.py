@@ -10,8 +10,13 @@ if os.environ.get('PAAS_MANAGER_ENV') == 'test':
 
 def db_action(fn):
     def wrapped(*args, **kwargs):
-        res = fn(*args, **kwargs)
-        DatabaseConnector.connect.commit()
+        try:
+            res = fn(*args, **kwargs)
+            DatabaseConnector.connect.commit()
+        except (mysql.connector.InterfaceError, mysql.connector.OperationalError):
+            DatabaseConnector.connect.reconnect()
+            res = fn(*args, **kwargs)
+            DatabaseConnector.connect.commit()
         return res
     return wrapped
 
@@ -44,6 +49,7 @@ class DatabaseConnector():
         return ' AND '.join(map(cls._val_to_cond, conditions.items()))
 
     @classmethod
+    @db_action
     def _make_query(cls, conditions, options):
         if 'fields' in options:
             fields = ', '.join(options['fields'])
@@ -57,6 +63,10 @@ class DatabaseConnector():
         if conditions:
             query_template += " where {conditions}"
             args += tuple(conditions.values())
+
+        if 'order' in options:
+            # FIXME: strange behavior with prepared query
+            query_template += " order by " + options['order']
 
         if 'limit' in options:
             query_template += " limit %s"
@@ -109,6 +119,14 @@ class DatabaseConnector():
         query = query_template.format(table=cls.table)
         cls.cursor.execute(query)
 
+    @classmethod
+    def update_entity(cls, id, **kwargs):
+        entity = cls.find(id)
+        if entity:
+            entity.update(**kwargs)
+            return entity
+        return None
+
     def update(self, **kwargs):
         for k, v in kwargs.items():
             setattr(self, k, v)
@@ -151,3 +169,8 @@ class DatabaseConnector():
         query_template = "delete from {table} where id=%s"
         query = query_template.format(table=self.table)
         self.cursor.execute(query, (self.id,))
+
+    def upload_dir(self):
+        base_path = os.path.expanduser(config['app']['upload_folder'])
+        class_name = self.__class__.__name__.lower()
+        return os.path.join(base_path, class_name, str(self.id))

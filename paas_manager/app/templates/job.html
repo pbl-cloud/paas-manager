@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<h2>実行結果</h2>
+<table class="table info">
+  <tr>
+    <td>ファイル名</td>
+    <td>{{job.filename}}</td>
+  </tr>
+  <tr>
+    <td>引数</td>
+    <td>{{job.arguments}}</td>
+  </tr>
+  <tr>
+    <td>試し回数</td>
+    <td>{{job.retries}}</td>
+  </tr>
+  <tr>
+    <td>状態</td>
+    <td>{{job.human_status}}</td>
+  </tr>
+</table>
+
+{% if job.is_done %}
+<div class="results">
+  {% for title, name, output in [('標準出力', 'stdout', job.stdout),
+                                 ('標準エラー出力', 'stderr', job.stderr)] %}
+    <div class="{{name}}">
+      <h3>{{title}}</h3>
+      {% if output|trim|length == 0 %}
+        {{title}}が空です
+      {% else %}
+      <div class="row">
+        <div class="col-xs-8">
+          <textarea class="form-control" readonly>{{output}}</textarea>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+{% endif %}
+
+{% endblock %}

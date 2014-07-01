@@ -1,5 +1,6 @@
 zookeeper:
   hosts: '127.0.0.1:2181'
+  timeout: 5
 
 mysql:
   host: localhost
@@ -9,8 +10,11 @@ mysql:
   charset: utf8
 
 hadoop:
-  user: star
+  login_user: star
   host: 192.168.122.8
+  hadoop_user: hdfs
+  command: hadoop
+  tmp_dir: /tmp
 
 security:
   secret: "I'M NOT VERY SECRET. OVERRIDE ME"
@@ -18,6 +22,11 @@ security:
 app:
   upload_folder: ~/jars
 
+logging:
+  level: INFO
+  filename: logs/application.log
+
 gmail:
   user: OVERRIDE_ME_IN_LOCAL_SETTINGS
   password: OVERRIDE_ME_IN_LOCAL_SETTINGS
+

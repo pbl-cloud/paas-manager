@@ -1,0 +1,20 @@
+<div id="job-creation-modal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">ジョブ新規作成</h4>
+      </div>
+      <div class="modal-body">
+        {% include 'job_form.html' %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if job_form.errors %}
+  <script>
+    window.showOnLoad = window.showOnLoad || [];
+    window.showOnLoad.push('job-creation-modal');
+  </script>
+{% endif %}
